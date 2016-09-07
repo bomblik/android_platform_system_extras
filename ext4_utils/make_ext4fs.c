@@ -67,6 +67,8 @@
 
 #endif
 
+int preserve_owner = 0;
+
 /* TODO: Not implemented:
    Allocating blocks in the same block group as the file inode
    Hash or binary tree directories
@@ -184,6 +186,10 @@ static u32 build_directory_structure(const char *full_path, const char *dir_path
 			dentries[i].mtime = stat.st_mtime;
 		} else {
 			dentries[i].mtime = fixed_time;
+		}
+		if (preserve_owner) {
+			dentries[i].uid = stat.st_uid;
+			dentries[i].gid = stat.st_gid;
 		}
 		uint64_t capabilities;
 		if (fs_config_func != NULL) {

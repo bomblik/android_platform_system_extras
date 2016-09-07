@@ -47,13 +47,15 @@ struct selabel_handle;
 extern struct fs_info info;
 
 
+extern int preserve_owner;
+
 static void usage(char *path)
 {
 	fprintf(stderr, "%s [ -l <len> ] [ -j <journal size> ] [ -b <block_size> ]\n", basename(path));
 	fprintf(stderr, "    [ -g <blocks per group> ] [ -i <inodes> ] [ -I <inode size> ]\n");
 	fprintf(stderr, "    [ -L <label> ] [ -f ] [ -a <android mountpoint> ]\n");
 	fprintf(stderr, "    [ -S file_contexts ] [ -C fs_config ] [ -T timestamp ]\n");
-	fprintf(stderr, "    [ -z | -s ] [ -w ] [ -c ] [ -J ] [ -v ] [ -B <block_list_file> ]\n");
+	fprintf(stderr, "    [ -z | -s ] [ -w ] [ -c ] [ -J ] [ -o ] [ -v ] [ -B <block_list_file> ]\n");
 	fprintf(stderr, "    <filename> [<directory>]\n");
 }
 
@@ -79,7 +81,7 @@ int main(int argc, char **argv)
 	struct selinux_opt seopts[] = { { SELABEL_OPT_PATH, "" } };
 #endif
 
-	while ((opt = getopt(argc, argv, "l:j:b:g:i:I:L:a:S:T:C:B:fwzJsctv")) != -1) {
+	while ((opt = getopt(argc, argv, "l:j:b:g:i:I:L:a:S:T:C:B:fwzJsctov")) != -1) {
 		switch (opt) {
 		case 'l':
 			info.len = parse_num(optarg);
@@ -141,6 +143,10 @@ int main(int argc, char **argv)
 				exit(EXIT_FAILURE);
 			}
 #endif
+			break;
+		case 'o':
+			preserve_owner = 1;
+			printf("Warning: Enabling 'preserve ownership', this is an unofficial feature!\n");
 			break;
 		case 'v':
 			verbose = 1;
